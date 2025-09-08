@@ -199,177 +199,286 @@ class _MqttPageState extends State<MqttPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Flutter MQTT 示例'),
+        backgroundColor: Colors.blue.shade600,
+        foregroundColor: Colors.white,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // 连接状态显示
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Text('服务器: bmmzhao.cn:1883', style: TextStyle(fontSize: 16)),
-                    SizedBox(height: 8),
-                    Text('连接状态: $connectionState',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: connectionState == '已连接' ? Colors.green : Colors.red
-                        )),
-                    SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton(
-                          onPressed: connectionState == '已连接' ? null : connectToMqtt,
-                          child: Text('连接'),
-                        ),
-                        ElevatedButton(
-                          onPressed: connectionState == '已连接' ? disconnectFromMqtt : null,
-                          child: Text('断开'),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            SizedBox(height: 16),
-
-            // 订阅主题
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text('订阅主题', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 8),
-                    TextField(
-                      controller: subscribeTopicController,
-                      decoration: InputDecoration(
-                        labelText: '主题名称',
-                        border: OutlineInputBorder(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // 连接状态显示
+              Card(
+                elevation: 4,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Icon(
+                        connectionState == '已连接' ? Icons.wifi : Icons.wifi_off,
+                        color: connectionState == '已连接' ? Colors.green : Colors.red,
+                        size: 24,
                       ),
-                    ),
-                    SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: subscribeToTopic,
-                            child: Text('订阅'),
+                      SizedBox(height: 8),
+                      Text('服务器: bmmzhao.cn:1883',
+                          style: TextStyle(fontSize: 14, color: Colors.grey.shade600)),
+                      SizedBox(height: 4),
+                      Text('连接状态: $connectionState',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: connectionState == '已连接' ? Colors.green : Colors.red
+                          )),
+                      SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: connectionState == '已连接' ? null : connectToMqtt,
+                              icon: Icon(Icons.link, size: 18),
+                              label: Text('连接'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(vertical: 12),
+                              ),
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: unsubscribeFromTopic,
-                            child: Text('取消订阅'),
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: connectionState == '已连接' ? disconnectFromMqtt : null,
+                              icon: Icon(Icons.link_off, size: 18),
+                              label: Text('断开'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(vertical: 12),
+                              ),
+                            ),
                           ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 12),
+
+              // 订阅主题
+              Card(
+                elevation: 4,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.subscriptions, color: Colors.blue, size: 20),
+                          SizedBox(width: 8),
+                          Text('订阅主题', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      SizedBox(height: 12),
+                      TextField(
+                        controller: subscribeTopicController,
+                        decoration: InputDecoration(
+                          labelText: '主题名称',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                          prefixIcon: Icon(Icons.topic),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+                      SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: subscribeToTopic,
+                              icon: Icon(Icons.add, size: 18),
+                              label: Text('订阅'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: unsubscribeFromTopic,
+                              icon: Icon(Icons.remove, size: 18),
+                              label: Text('取消订阅'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.orange,
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            SizedBox(height: 16),
+              SizedBox(height: 12),
 
-            // 发布消息
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text('发布消息', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 8),
-                    TextField(
-                      controller: topicController,
-                      decoration: InputDecoration(
-                        labelText: '发布主题',
-                        border: OutlineInputBorder(),
+              // 发布消息
+              Card(
+                elevation: 4,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.publish, color: Colors.green, size: 20),
+                          SizedBox(width: 8),
+                          Text('发布消息', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        ],
                       ),
-                    ),
-                    SizedBox(height: 8),
-                    TextField(
-                      controller: messageController,
-                      decoration: InputDecoration(
-                        labelText: '消息内容',
-                        border: OutlineInputBorder(),
+                      SizedBox(height: 12),
+                      TextField(
+                        controller: topicController,
+                        decoration: InputDecoration(
+                          labelText: '发布主题',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                          prefixIcon: Icon(Icons.topic),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 8),
-                    ElevatedButton(
-                      onPressed: publishMessage,
-                      child: Text('发送消息'),
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                    ),
-                  ],
+                      SizedBox(height: 8),
+                      TextField(
+                        controller: messageController,
+                        maxLines: 2,
+                        decoration: InputDecoration(
+                          labelText: '消息内容',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                          prefixIcon: Icon(Icons.message),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                        ),
+                      ),
+                      SizedBox(height: 12),
+                      ElevatedButton.icon(
+                        onPressed: publishMessage,
+                        icon: Icon(Icons.send, size: 18),
+                        label: Text('发送消息'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            SizedBox(height: 16),
+              SizedBox(height: 12),
 
-            // 消息列表
-            Container(
-              height: MediaQuery.of(context).size.height * 0.3, // 设置固定高度为屏幕高度的30%
-              child: Card(
+              // 消息列表 - 改为动态高度
+              Card(
+                elevation: 4,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          Icon(Icons.message, color: Colors.blue, size: 20),
+                          SizedBox(width: 8),
                           Text('消息记录', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                          TextButton(
+                          Spacer(),
+                          TextButton.icon(
                             onPressed: () {
                               setState(() {
                                 messages.clear();
                               });
                             },
-                            child: Text('清空'),
+                            icon: Icon(Icons.clear_all, size: 16),
+                            label: Text('清空'),
                           ),
                         ],
                       ),
                     ),
-                    Expanded(
+                    Container(
+                      height: messages.isEmpty ? 120 : (messages.length > 5 ? 300 : messages.length * 60.0),
                       child: messages.isEmpty
                           ? Center(
-                        child: Text(
-                          '暂无消息\n连接后发送或接收消息将显示在这里',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.inbox, size: 48, color: Colors.grey.shade400),
+                            SizedBox(height: 8),
+                            Text(
+                              '暂无消息',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              '连接后发送或接收消息将显示在这里',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
                         ),
                       )
                           : ListView.builder(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         itemCount: messages.length,
                         itemBuilder: (context, index) {
                           final isReceived = messages[index].startsWith('收到消息');
+                          final isSubscribe = messages[index].contains('订阅主题');
+
+                          Color bgColor;
+                          Color iconColor;
+                          IconData iconData;
+
+                          if (isSubscribe) {
+                            bgColor = Colors.purple.shade50;
+                            iconColor = Colors.purple;
+                            iconData = Icons.subscriptions;
+                          } else if (isReceived) {
+                            bgColor = Colors.blue.shade50;
+                            iconColor = Colors.blue;
+                            iconData = Icons.call_received;
+                          } else {
+                            bgColor = Colors.green.shade50;
+                            iconColor = Colors.green;
+                            iconData = Icons.call_made;
+                          }
+
                           return Container(
-                            margin: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            margin: EdgeInsets.symmetric(vertical: 2),
                             child: Card(
-                              color: isReceived ? Colors.blue.shade50 : Colors.green.shade50,
+                              color: bgColor,
+                              elevation: 1,
                               child: ListTile(
                                 dense: true,
-                                leading: Icon(
-                                  isReceived ? Icons.arrow_downward : Icons.arrow_upward,
-                                  color: isReceived ? Colors.blue : Colors.green,
-                                  size: 20,
+                                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                leading: CircleAvatar(
+                                  backgroundColor: iconColor.withOpacity(0.2),
+                                  radius: 16,
+                                  child: Icon(
+                                    iconData,
+                                    color: iconColor,
+                                    size: 16,
+                                  ),
                                 ),
                                 title: Text(
                                   messages[index],
@@ -377,7 +486,7 @@ class _MqttPageState extends State<MqttPage> {
                                 ),
                                 subtitle: Text(
                                   DateTime.now().toString().substring(11, 19),
-                                  style: TextStyle(fontSize: 11),
+                                  style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
                                 ),
                               ),
                             ),
@@ -388,9 +497,9 @@ class _MqttPageState extends State<MqttPage> {
                   ],
                 ),
               ),
-            ),
-            SizedBox(height: 20), // 底部额外间距
-          ],
+              SizedBox(height: 16), // 底部间距
+            ],
+          ),
         ),
       ),
     );
