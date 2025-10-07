@@ -37,6 +37,7 @@ dependencies:
   fl_chart: ^0.66.0
   mqtt_client: ^10.2.0
   cupertino_icons: ^1.0.8
+  flutter_launcher_icons: ^0.13.1
 
 
 dev_dependencies:
@@ -91,3 +92,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+ 
