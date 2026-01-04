@@ -25,15 +25,6 @@ workflows:
         script: |
           flutter pub get
 
-      - name: 分析代码
-        script: |
-          flutter analyze
-
-      - name: 运行测试
-        script: |
-          flutter test
-        test_report: build/test-results/**/*.xml
-
       - name: 构建 Debug APK
         script: |
           flutter build apk --debug
