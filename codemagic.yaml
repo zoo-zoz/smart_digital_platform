@@ -7,10 +7,6 @@ workflows:
     environment:
       flutter: stable
       java: 17
-      xcode: latest
-      groups:
-      # 如果有环境变量,在 Codemagic UI 中配置后取消注释
-      # - keystore_credentials
       vars:
         PACKAGE_NAME: "com.nbcb.smart_digital_platform"
 
