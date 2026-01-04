@@ -1,0 +1,60 @@
+workflows:
+  android-workflow:
+    name: Android APK Build
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+
+    environment:
+      flutter: stable
+      java: 17
+      xcode: latest
+      groups:
+      # 如果有环境变量,在 Codemagic UI 中配置后取消注释
+      # - keystore_credentials
+      vars:
+        PACKAGE_NAME: "com.nbcb.smart_digital_platform"
+
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+        - pattern: 'develop'
+          include: true
+
+    scripts:
+      - name: 获取 Flutter 依赖
+        script: |
+          flutter pub get
+
+      - name: 分析代码
+        script: |
+          flutter analyze
+
+      - name: 运行测试
+        script: |
+          flutter test
+        test_report: build/test-results/**/*.xml
+
+      - name: 构建 Debug APK
+        script: |
+          flutter build apk --debug
+
+      - name: 构建 Release APK
+        script: |
+          flutter build apk --release
+
+    artifacts:
+      - build/**/outputs/**/*.apk
+      - build/**/outputs/mapping.txt
+      - flutter_drive.log
+
+    publishing:
+      email:
+        recipients:
+          - bmmzcwwbm@gmail.com
+        notify:
+          success: true
+          failure: true
