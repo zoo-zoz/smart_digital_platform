@@ -23,13 +23,15 @@ android {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.nbcb.smart_digital_platform"
         // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk =  21
+        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
+        minSdk = 21
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
 
-        manifestPlaceholders["JPUSH_PKGNAME"] = applicationId
+        // Fix: Store applicationId in a local variable to avoid smart cast issues
+        val pkgName = applicationId
+        manifestPlaceholders["JPUSH_PKGNAME"] = pkgName
         manifestPlaceholders["JPUSH_APPKEY"] = "31bf6d9303c4f6c0875096bf"
         manifestPlaceholders["JPUSH_CHANNEL"] = "developer-default"
     }
