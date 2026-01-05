@@ -29,9 +29,8 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
 
-        // Fix: Store applicationId in a local variable to avoid smart cast issues
-        val pkgName = applicationId
-        manifestPlaceholders["JPUSH_PKGNAME"] = pkgName
+        // Fix: Handle nullable applicationId properly
+        manifestPlaceholders["JPUSH_PKGNAME"] = applicationId ?: "com.nbcb.smart_digital_platform"
         manifestPlaceholders["JPUSH_APPKEY"] = "31bf6d9303c4f6c0875096bf"
         manifestPlaceholders["JPUSH_CHANNEL"] = "developer-default"
     }
