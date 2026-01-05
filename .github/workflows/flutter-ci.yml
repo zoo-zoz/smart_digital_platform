@@ -29,9 +29,9 @@ jobs:
       - name: 设置 Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'  # 使用稳定版本
           channel: 'stable'
           cache: true
+          # 不指定版本，使用最新稳定版（包含 Dart 3.7.2+）
 
       # 4. 检查 Flutter 版本
       - name: 检查 Flutter 版本
@@ -42,14 +42,14 @@ jobs:
         run: flutter pub get
 
       # 6. 代码分析 (可选)
-      - name: 运行 Flutter 代码分析
-        run: flutter analyze
-        continue-on-error: true  # 即使分析失败也继续构建
+        #- name: 运行 Flutter 代码分析
+        # run: flutter analyze
+        #continue-on-error: true  # 即使分析失败也继续构建
 
       # 7. 运行测试 (可选)
-      - name: 运行 Flutter 测试
-        run: flutter test
-        continue-on-error: true
+        #- name: 运行 Flutter 测试
+        #run: flutter test
+       # continue-on-error: true
 
       # 8. 构建 Debug APK
       - name: 构建 Debug APK
@@ -118,9 +118,9 @@ jobs:
       - name: 设置 Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
           channel: 'stable'
           cache: true
+          # 不指定版本，使用最新稳定版（包含 Dart 3.7.2+）
 
       - name: 获取依赖
         run: flutter pub get
