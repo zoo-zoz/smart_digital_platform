@@ -1,13 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'pages/mqtt_page.dart';
 import 'pages/webapi_page.dart';
 import 'pages/chart_page.dart';
+import 'pages/jpush_test_page.dart';  // 新增
+import 'services/jpush_service.dart';   // 新增
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 初始化极光推送
+  final jpushService = JPushService();
+  await jpushService.init();
+
+  // 请求通知权限 (Android 13+)
+  await Permission.notification.request();
+
+  runApp(MyApp(jpushService: jpushService));
 }
 
 class MyApp extends StatelessWidget {
+  final JPushService jpushService;
+
+  const MyApp({Key? key, required this.jpushService}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -16,12 +32,16 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomePage(),
+      home: HomePage(jpushService: jpushService),
     );
   }
 }
 
 class HomePage extends StatelessWidget {
+  final JPushService jpushService;
+
+  const HomePage({Key? key, required this.jpushService}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,6 +159,22 @@ class HomePage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => ChartPage()),
+                          );
+                        },
+                      ),
+                      // 新增极光推送测试
+                      _buildFunctionCard(
+                        context,
+                        title: '极光推送测试',
+                        subtitle: '测试消息推送通知功能',
+                        icon: Icons.notifications_active,
+                        color: Colors.red,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => JPushTestPage(jpushService: jpushService),
+                            ),
                           );
                         },
                       ),

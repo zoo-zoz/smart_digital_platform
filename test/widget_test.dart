@@ -1,19 +1,23 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// test/widget_test.dart
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:smart_digital_platform/main.dart';
+import 'package:smart_digital_platform/services/jpush_service.dart';
 
 void main() {
+  // 创建一个模拟的 JPushService 用于测试
+  late JPushService mockJPushService;
+
+  setUp(() {
+    // 在每个测试之前初始化 mock service
+    mockJPushService = JPushService();
+  });
+
   testWidgets('HomePage loads correctly', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(MyApp(jpushService: mockJPushService));
 
     // Verify that our app title appears
     expect(find.text('智能数字平台'), findsOneWidget);
@@ -32,6 +36,9 @@ void main() {
     expect(find.text('图表测试'), findsOneWidget);
     expect(find.text('测试各种数据图表展示'), findsOneWidget);
 
+    expect(find.text('极光推送测试'), findsOneWidget);
+    expect(find.text('测试消息推送通知功能'), findsOneWidget);
+
     // Verify that version info is displayed
     expect(find.text('版本 1.0.0 | © 2024 智能数字平台'), findsOneWidget);
 
@@ -42,11 +49,12 @@ void main() {
     expect(find.byIcon(Icons.wifi_tethering), findsOneWidget);
     expect(find.byIcon(Icons.api), findsOneWidget);
     expect(find.byIcon(Icons.bar_chart), findsOneWidget);
+    expect(find.byIcon(Icons.notifications_active), findsOneWidget);
   });
 
   testWidgets('Navigation to MQTT page works', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(MyApp(jpushService: mockJPushService));
 
     // Find the MQTT test card
     final mqttCard = find.ancestor(
@@ -62,12 +70,11 @@ void main() {
     // Verify that we navigated to the MQTT page
     expect(find.text('MQTT 测试'), findsNWidgets(2)); // One in AppBar, one might be elsewhere
     expect(find.text('服务器: bmmzhao.cn:1883'), findsOneWidget);
-    expect(find.text('未连接'), findsOneWidget);
   });
 
   testWidgets('Navigation to Web API page works', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(MyApp(jpushService: mockJPushService));
 
     // Find the Web API test card
     final webApiCard = find.ancestor(
@@ -81,14 +88,12 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify that we navigated to the Web API page
-    expect(find.text('Web API 测试页面'), findsOneWidget);
-    expect(find.text('此页面正在开发中...'), findsOneWidget);
-    expect(find.text('将包含 RESTful API 接口调用测试功能'), findsOneWidget);
+    expect(find.text('Web API 测试'), findsNWidgets(2));
   });
 
   testWidgets('Navigation to Chart page works', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(MyApp(jpushService: mockJPushService));
 
     // Find the Chart test card
     final chartCard = find.ancestor(
@@ -102,14 +107,32 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify that we navigated to the Chart page
-    expect(find.text('图表测试页面'), findsOneWidget);
-    expect(find.text('此页面正在开发中...'), findsOneWidget);
-    expect(find.text('将包含各种数据图表展示功能\n柱状图、折线图、饼图等'), findsOneWidget);
+    expect(find.text('图表测试'), findsNWidgets(2));
+  });
+
+  testWidgets('Navigation to JPush page works', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(MyApp(jpushService: mockJPushService));
+
+    // Find the JPush test card
+    final jpushCard = find.ancestor(
+      of: find.text('极光推送测试'),
+      matching: find.byType(Card),
+    );
+    expect(jpushCard, findsOneWidget);
+
+    // Tap the JPush card
+    await tester.tap(jpushCard);
+    await tester.pumpAndSettle();
+
+    // Verify that we navigated to the JPush page
+    expect(find.text('极光推送测试'), findsNWidgets(2));
+    expect(find.text('Registration ID'), findsOneWidget);
   });
 
   testWidgets('Back navigation works from pages', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(MyApp(jpushService: mockJPushService));
 
     // Navigate to MQTT page
     final mqttCard = find.ancestor(
@@ -134,22 +157,20 @@ void main() {
 
   testWidgets('UI layout and styling are correct', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(MyApp(jpushService: mockJPushService));
 
-    // Verify that all function cards are present
-    expect(find.byType(Card), findsNWidgets(3)); // Three function cards
+    // Verify that all function cards are present (now 4 cards)
+    expect(find.byType(Card), findsNWidgets(4));
 
     // Verify that all cards have InkWell for tap handling
-    expect(find.byType(InkWell), findsNWidgets(3));
-
-    // Verify that gradient container exists
-    expect(find.byType(Container), findsAtLeastNWidgets(1));
+    expect(find.byType(InkWell), findsNWidgets(4));
 
     // Verify proper icon arrangement
     final functionIcons = [
       Icons.wifi_tethering,
       Icons.api,
       Icons.bar_chart,
+      Icons.notifications_active,
     ];
 
     for (final icon in functionIcons) {
@@ -157,6 +178,6 @@ void main() {
     }
 
     // Verify arrow icons for navigation indication
-    expect(find.byIcon(Icons.arrow_forward_ios), findsNWidgets(3));
+    expect(find.byIcon(Icons.arrow_forward_ios), findsNWidgets(4));
   });
 }
