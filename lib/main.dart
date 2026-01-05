@@ -3,8 +3,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'pages/mqtt_page.dart';
 import 'pages/webapi_page.dart';
 import 'pages/chart_page.dart';
-import 'pages/jpush_test_page.dart';  // 新增
-import 'services/jpush_service.dart';   // 新增
+import 'pages/jpush_test_page.dart';
+import 'services/jpush_service.dart';
+import 'services/battery_optimization_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,10 +38,40 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final JPushService jpushService;
 
   const HomePage({Key? key, required this.jpushService}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  bool _hasShownPermissionDialog = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // 首次启动时延迟显示权限引导
+    Future.delayed(Duration(seconds: 2), () {
+      if (!_hasShownPermissionDialog && mounted) {
+        _checkAndShowPermissionGuide();
+      }
+    });
+  }
+
+  Future<void> _checkAndShowPermissionGuide() async {
+    final batteryService = BatteryOptimizationService();
+    final isIgnoring = await batteryService.isIgnoringBatteryOptimizations();
+
+    if (!isIgnoring && mounted) {
+      setState(() {
+        _hasShownPermissionDialog = true;
+      });
+      BatteryOptimizationService.showPermissionGuideDialog(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +83,15 @@ class HomePage extends StatelessWidget {
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
+        actions: [
+          // 添加设置按钮，可以再次打开权限引导
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              BatteryOptimizationService.showPermissionGuideDialog(context);
+            },
+          ),
+        ],
       ),
       body: SafeArea(
         child: Container(
@@ -162,7 +202,6 @@ class HomePage extends StatelessWidget {
                           );
                         },
                       ),
-                      // 新增极光推送测试
                       _buildFunctionCard(
                         context,
                         title: '极光推送测试',
@@ -173,7 +212,7 @@ class HomePage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => JPushTestPage(jpushService: jpushService),
+                              builder: (context) => JPushTestPage(jpushService: widget.jpushService),
                             ),
                           );
                         },
