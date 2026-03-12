@@ -1,6 +1,6 @@
 # smart_digital_platform
 
-nbcb
+nbcb6
 
 ## Getting Started
 
